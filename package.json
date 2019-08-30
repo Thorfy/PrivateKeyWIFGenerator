@@ -1,0 +1,26 @@
+{
+  "name": "walletfinder",
+  "version": "1.0.0",
+  "description": "find wallet from private key range",
+  "main": "Create.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thorfy/PrivateKeyWIFGenerator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Thorfy/PrivateKeyWIFGenerator/issues"
+  },
+  "homepage": "https://github.com/Thorfy/PrivateKeyWIFGenerator#readme",
+  "dependencies": {
+    "bs58": "^4.0.1",
+    "elliptic": "^6.5.0",
+    "js-sha256": "^0.9.0",
+    "request": "^2.88.0",
+    "ripemd160": "^2.0.2"
+  }
+}

@@ -9,14 +9,13 @@ const ecdsa = new ec('secp256k1');
 const max = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
 let isInvalid = true;  
 let privateKey; 
-privateKey = Buffer.from("0FFFFFFF00000000000000000000000000000000000000000000000000000000", 'hex');   
+privateKey = Buffer.from("0000000000000000000000000000000000000000000000000000000000000001", 'hex');   
 //privateKey = secureRandom.randomBuffer(32);
-  
+WIFKey = createPrivateKeyWIF(privateKey);
 publicHash = createPublicHash(privateKey);
 publicKey = createPublicAddress(publicHash);
-WIFKey = createPrivateKeyWIF(privateKey);
 uri = "https://blockchain.info/balance?cors=true&active=" + encodeURIComponent(publicKey.toString("hex"));
-console.log(uri);
+console.log('> Blockchain info: ',uri);
 
 function createPublicHash(privateKey){
 
