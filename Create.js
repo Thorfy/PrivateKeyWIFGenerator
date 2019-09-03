@@ -5,24 +5,35 @@ const request = require('request');
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
-
 const max = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
-let isInvalid = true;  
-let privateKey; 
-privateKey = Buffer.from("0000000000000000000000000000000000000000000000000000000000000002", 'hex');   
-console.log(privateKey);
-//console.log(privateKey++);
-//console.log(Buffer.from(privateKey+1, 'hex'));
-//console.log(Buffer.from(privateKey+"1", 'hex'));
 
 
+Number.prototype.prefixWith2String = function(s,n) {
+    var num = this.toString(16);
+    while(num.length < n) {
+        num = s + num;
+    }
+    return num;
+};
 
 
-//privateKey = secureRandom.randomBuffer(32);
-WIFKey = createPrivateKeyWIF(privateKey);
-publicHash = createPublicHash(privateKey);
-publicKey = createPublicAddress(publicHash);
-uri = "https://blockchain.info/balance?cors=true&active=" + encodeURIComponent(publicKey.toString("hex"));
+let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
+
+NbRep = 0;
+
+let publicKeyArray = [];
+
+while (NbRep < 128) {
+  privateKeyString = nextKey(privateKeyString);
+  privateKey = Buffer.from(privateKeyString, 'hex');   
+  WIFKey = createPrivateKeyWIF(privateKey);
+  publicHash = createPublicHash(privateKey);
+  publicKey = createPublicAddress(publicHash);
+  publicKeyArray.push(publicKey)
+  NbRep++;
+}
+
+uri = "https://blockchain.info/balance?cors=true&active=" + encodeURIComponent(publicKeyArray.join("|"));
 console.log('> Blockchain info: ',uri);
 
 
@@ -64,5 +75,13 @@ function createPrivateKeyWIF(privateKey) {
     console.log('> privateKeyWIF: '+ privateKeyWIF);
     
     return privateKeyWIF;
-}
+} 
+ function nextKey(key){
+  key = parseInt(key, 16);
+  key++;
+  console.log(key);
+  key = key.prefixWith2String('0', 64);
+  console.log(key);
+  return key 
+ } 
 
