@@ -5,7 +5,7 @@ const request = require('request');
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
-const max = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
+const maxMax = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
 
 
 Number.prototype.prefixWith2String = function(s,n) {
@@ -18,23 +18,47 @@ Number.prototype.prefixWith2String = function(s,n) {
 
 
 let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
-
-NbRep = 0;
-
+let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000010000"; 
+let countTotal = 0;
 let publicKeyArray = [];
 
-while (NbRep < 128) {
-  privateKeyString = nextKey(privateKeyString);
-  privateKey = Buffer.from(privateKeyString, 'hex');   
-  WIFKey = createPrivateKeyWIF(privateKey);
-  publicHash = createPublicHash(privateKey);
-  publicKey = createPublicAddress(publicHash);
-  publicKeyArray.push(publicKey)
-  NbRep++;
-}
+while (privateKeyString != privateKeyStringMax ) {
+  
+  NbRep = 0;
+ 
+let pairKeyArray = [];
 
-uri = "https://blockchain.info/balance?cors=true&active=" + encodeURIComponent(publicKeyArray.join("|"));
-console.log('> Blockchain info: ',uri);
+  while (NbRep < 135) {
+    if(privateKeyString == privateKeyStringMax){
+      break;
+    }
+    privateKeyString = nextKey(privateKeyString);
+    privateKey = Buffer.from(privateKeyString, 'hex');   
+    WIFKey = createPrivateKeyWIF(privateKey);
+    publicHash = createPublicHash(privateKey);
+    publicKey = createPublicAddress(publicHash);
+    publicKeyArray.push(publicKey)
+    pairKeyArray[publicKey] = WIFKey;
+    NbRep++;
+    countTotal++;
+    console.log(countTotal); 
+  }
+
+ 
+  //uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
+  //console.log('> Blockchain info: ',uri);
+  /*
+  request(uri, { json: true }, (err, res, body) => {
+    if (err) { return console.log(err); }
+    for (let [publicKey, data] of Object.entries(body)) {
+      if(data.total_received){
+        console.log(`${pairKeyArray[publicKey]}: ${data.total_received}`);
+      } 
+    }
+  });
+  */
+}
+console.log("Done !");
 
 
 function createPublicHash(privateKey){
@@ -44,7 +68,7 @@ function createPublicHash(privateKey){
 
 	let hash = sha256(Buffer.from(publicKey, 'hex'));
 	let publicKeyHash = new ripemd160().update(Buffer.from(hash, 'hex')).digest();
-	console.log('> Public hash created: ', publicKeyHash.toString("hex"));
+	//console.log('> Public hash created: ', publicKeyHash.toString("hex"));
 
 return publicKeyHash.toString("hex");
 
@@ -57,7 +81,7 @@ function createPublicAddress(publicKeyHash) {
   	const step4 = step1.toString('hex') + checksum;
   	const address = base58.encode(Buffer.from(step4, 'hex'));
 
-  	console.log('> Public key created: ',address)
+  	//console.log('> Public key created: ',address)
   	return address;
 }
 
@@ -71,17 +95,18 @@ function createPrivateKeyWIF(privateKey) {
     const privateKeyWIF = base58.encode(Buffer.from(step4,"hex"));
 
   
-  	console.log('> Private key: '+ privateKey.toString('hex'));
-    console.log('> privateKeyWIF: '+ privateKeyWIF);
+  	//console.log('> Private key: '+ privateKey.toString('hex'));
+    //console.log('> privateKeyWIF: '+ privateKeyWIF);
     
     return privateKeyWIF;
 } 
  function nextKey(key){
+  console.log(key);
   key = parseInt(key, 16);
   key++;
-  console.log(key);
+  //console.log(key);
   key = key.prefixWith2String('0', 64);
-  console.log(key);
+  //console.log(key);
   return key 
  } 
 
