@@ -2,7 +2,7 @@ const sha256 = require('js-sha256');
 const ripemd160 = require('ripemd160');
 const base58 = require('bs58');
 const request = require('request');
-const fs = require('fs');
+const fs = require('fs'),
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
@@ -18,49 +18,14 @@ Number.prototype.prefixWith2String = function(s,n) {
 };
 
 
-let privateKeyString =    "0000000000000000000000000000000000000000000000000000000000000001"; 
-let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000000fff"; 
-let countTotal = 0;
-let publicKeyArray = [];
-
-while (privateKeyString != privateKeyStringMax ) {
-  
-  NbRep = 0;
- 
-let pairKeyArray = [];
-
-  while (NbRep < 135) {
-    if(privateKeyString == privateKeyStringMax){
-      break;
-    }
-    privateKeyString = nextKey(privateKeyString);
-    privateKey = Buffer.from(privateKeyString, 'hex');   
+let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
+  privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);
     publicKey = createPublicAddress(publicHash);
-    publicKeyArray.push(publicKey)
-    pairKeyArray[publicKey] = WIFKey;
-    NbRep++;
-    countTotal++;
-    console.log(countTotal); 
-  }
-
- 
-  uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
-  //console.log('> Blockchain info: ',uri);
+   
+    console.log(publicKey); 
   
-  request(uri, { json: true }, (err, res, body) => {
-    if (err) { return console.log(err); }
-    for (let [publicKey, data] of Object.entries(body)) {
-      if(data.total_received){
-        console.log(`${pairKeyArray[publicKey]}: ${data.total_received}`);
-        fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}-> n_tx: ${data.n_tx} - current: ${data.final_balance} S ; \n`, 'utf8');
-      } 
-    }
-  });
-  
-}
-console.log("Done !");
 
 
 function createPublicHash(privateKey){
