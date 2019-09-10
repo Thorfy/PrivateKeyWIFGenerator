@@ -2,7 +2,7 @@ const sha256 = require('js-sha256');
 const ripemd160 = require('ripemd160');
 const base58 = require('bs58');
 const request = require('request');
-const fs = require('fs'),
+const fs = require('fs');
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
@@ -18,8 +18,8 @@ Number.prototype.prefixWith2String = function(s,n) {
 };
 
 
-let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
-let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000000010"; 
+let privateKeyString =    "0000000000000000000000000000000000000000000000000000000000010fff"; 
+let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000011fff"; 
 let countTotal = 0;
 let publicKeyArray = [];
 
@@ -54,7 +54,7 @@ let pairKeyArray = [];
     for (let [publicKey, data] of Object.entries(body)) {
       if(data.total_received){
         console.log(`${pairKeyArray[publicKey]}: ${data.total_received}`);
-        fs.appendFileSync('sample.txt',JSON.stringify(pairKeyArray), 'utf8');
+        fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx} ${data.final_balance} \n`, 'utf8');
       } 
     }
   });
