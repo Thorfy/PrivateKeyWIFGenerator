@@ -2,7 +2,7 @@ const sha256 = require('js-sha256');
 const ripemd160 = require('ripemd160');
 const base58 = require('bs58');
 const request = require('request');
-const fs = require('fs'),
+const fs = require('fs');
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
@@ -18,7 +18,8 @@ Number.prototype.prefixWith2String = function(s,n) {
 };
 
 
-let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
+//let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
+  let privateKeyString =   "f000000000000000000000000000000000000000000000000000000000000000"; 
   privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);

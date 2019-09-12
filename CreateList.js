@@ -9,58 +9,67 @@ const ecdsa = new ec('secp256k1');
 const maxMax = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
 
 
-Number.prototype.prefixWith2String = function(s,n) {
-    var num = this.toString(16);
-    while(num.length < n) {
-        num = s + num;
-    }
-    return num;
-};
-
-
 let privateKeyString =    "0000000000000000000000000000000000000000000000000000000000000001"; 
-let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000000f00"; 
+let privateKeyStringMax = "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"; 
 let countTotal = 0;
 let publicKeyArray = [];
-
-while (privateKeyString != privateKeyStringMax ) {
-  
-  NbRep = 0;
- 
+let nMax = 64;
+let nCount = 0;
+let hexCount = 1;
+let nbCall = 0;
 let pairKeyArray = [];
 
-  while (NbRep < 135) {
-    if(privateKeyString == privateKeyStringMax){
-      break;
-    }
-    privateKeyString = nextKey(privateKeyString);
-    privateKey = Buffer.from(privateKeyString, 'hex');   
+while (privateKeyString != privateKeyStringMax ) {
+
+	if(hexCount > parseInt("f",16) || privateKeyString.length > 65){
+		break;
+	}
+	if(nCount == 64){
+		hexCount++;
+		nCount = 0;
+	}
+	nLeft = nMax - nCount;
+	nRight = nCount;
+
+	privateKeyString = hexCount.toString(16);
+	while (nLeft !=1){
+		privateKeyString = "0" + privateKeyString;
+		nLeft--;
+	}
+	while (nRight !=0 && nCount !=64){
+		privateKeyString = privateKeyString + "0";
+		nRight--;
+	}
+
+	console.log(privateKeyString);
+
+	privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);
     publicKey = createPublicAddress(publicHash);
     publicKeyArray.push(publicKey)
     pairKeyArray[publicKey] = WIFKey;
-    NbRep++;
-    countTotal++;
-    console.log(countTotal); 
-  }
 
- console.log(countTotal); 
-  uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
-  //console.log('> Blockchain info: ',uri);
-  
-  request(uri, { json: true }, (err, res, body) => {
-    if (err) { return console.log(err); }
-    for (let [publicKey, data] of Object.entries(body)) {
-      if(data.n_tx){
-        console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
-        fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx}  ${data.total_received} ${data.final_balance} \n`, 'utf8');
-      } 
+    if(nbCall == 50){
+    	nbCall = 0;
+  		uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
+    	request(uri, { json: true }, (err, res, body) => {
+    		if (err) { return console.log(err); }
+    		for (let [publicKey, data] of Object.entries(body)) {
+      			if(data.n_tx){
+        			console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
+        			fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx} ${data.total_received} ${data.final_balance} \n`, 'utf8');
+      			} 
+    		}
+  		});
+  		publicKeyArray = [];
+  		
     }
-  });
-  
+
+	nCount ++;
+	nbCall ++;
 }
-console.log("Done !");
+
 
 
 function createPublicHash(privateKey){
@@ -102,13 +111,3 @@ function createPrivateKeyWIF(privateKey) {
     
     return privateKeyWIF;
 } 
- function nextKey(key){
-  console.log(key);
-  key = parseInt(key, 16);
-  key++;
-  //console.log(key);
-  key = key.prefixWith2String('0', 64);
-  //console.log(key);
-  return key 
- } 
-
