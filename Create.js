@@ -19,7 +19,7 @@ Number.prototype.prefixWith2String = function(s,n) {
 
 
 //let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
-  let privateKeyString =   "f000000000000000000000000000000000000000000000000000000000000000"; 
+  let privateKeyString =   "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"; 
   privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);

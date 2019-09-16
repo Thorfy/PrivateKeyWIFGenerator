@@ -21,7 +21,7 @@ let pairKeyArray = [];
 
 while (privateKeyString != privateKeyStringMax ) {
 
-	if(hexCount > parseInt("f",16) || privateKeyString.length > 65){
+	if(hexCount > 16 || privateKeyString.length > 64){
 		break;
 	}
 	if(nCount == 64){
@@ -40,8 +40,9 @@ while (privateKeyString != privateKeyStringMax ) {
 		privateKeyString = privateKeyString + "0";
 		nRight--;
 	}
-
-	console.log(privateKeyString);
+	if(privateKeyString.length > 64){
+		break;
+	}
 
 	privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
@@ -49,27 +50,29 @@ while (privateKeyString != privateKeyStringMax ) {
     publicKey = createPublicAddress(publicHash);
     publicKeyArray.push(publicKey)
     pairKeyArray[publicKey] = WIFKey;
-
-    if(nbCall == 50){
-    	nbCall = 0;
-  		uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
-    	request(uri, { json: true }, (err, res, body) => {
-    		if (err) { return console.log(err); }
-    		for (let [publicKey, data] of Object.entries(body)) {
-      			if(data.n_tx){
-        			console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
-        			fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx} ${data.total_received} ${data.final_balance} \n`, 'utf8');
-      			} 
-    		}
-  		});
-  		publicKeyArray = [];
-  		
-    }
-
 	nCount ++;
-	nbCall ++;
 }
-
+console.log(publicKeyArray.length);
+let uriCounter = 0;
+//console.log('> Blockchain info: ',uri);
+var i,j,temparray,chunk = 60;
+for (i=0,j=publicKeyArray.length; i<j; i+=chunk) {
+    temparray = publicKeyArray.slice(i,i+chunk);
+    // do whatever
+	uri = "https://blockchain.info/balance?cors=true&active=" + temparray.join("|");
+	request(uri, { json: true }, (err, res, body) => {
+		if (err) { return console.log(err); }
+		for (let [publicKey, data] of Object.entries(body)) {
+			if(data.n_tx){
+				console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
+				fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx}  ${data.total_received} ${data.final_balance} \n`, 'utf8');
+			} 
+		}
+	});
+	console.log(i);
+	uriCounter++;
+}
+console.log(uriCounter)
 
 
 function createPublicHash(privateKey){
