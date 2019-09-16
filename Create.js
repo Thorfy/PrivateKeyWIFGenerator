@@ -25,7 +25,10 @@ Number.prototype.prefixWith2String = function(s,n) {
     publicHash = createPublicHash(privateKey);
     publicKey = createPublicAddress(publicHash);
    
-    console.log(publicKey); 
+    console.log("privateKeyString: ",privateKeyString); 
+    console.log("WIFKey: ",WIFKey); 
+    console.log("publicHash: ",publicHash); 
+    console.log("publicKey: ",publicKey); 
   
 
 
