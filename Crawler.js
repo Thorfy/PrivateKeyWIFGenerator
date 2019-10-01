@@ -18,8 +18,8 @@ Number.prototype.prefixWith2String = function(s,n) {
 };
 
 
-let privateKeyString =    "0000000000000000000000000000000000000000000000000000000000000001"; 
-let privateKeyStringMax = "0000000000000000000000000000000000000000000000000000000000000f00"; 
+let privateKeyString =    "0000000000000000000000000000000000000000000000000000000000006fff"; 
+let privateKeyStringMax = "000000000000000000000000000000000000000000000000000000000000ffff"; 
 let countTotal = 0;
 let publicKeyArray = [];
 
@@ -45,7 +45,6 @@ let pairKeyArray = [];
     console.log(countTotal); 
   }
 
- console.log(countTotal); 
   uri = "https://blockchain.info/balance?cors=true&active=" + publicKeyArray.join("|");
   //console.log('> Blockchain info: ',uri);
   

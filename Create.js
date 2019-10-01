@@ -19,16 +19,18 @@ Number.prototype.prefixWith2String = function(s,n) {
 
 
 //let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
-  let privateKeyString =   "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"; 
-  privateKey = Buffer.from(privateKeyString, 'hex');   
+  let privateKeyString = "3d51955aed8662a7d3f917ca7d894f828442b8092ed0aaa10c67af75ce3df72c"; 
+  	privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);
     publicKey = createPublicAddress(publicHash);
+    uri = "https://blockchain.info/balance?cors=true&active=" +publicKey;
    
-    console.log("privateKeyString: ",privateKeyString); 
-    console.log("WIFKey: ",WIFKey); 
-    console.log("publicHash: ",publicHash); 
-    console.log("publicKey: ",publicKey); 
+    console.log("> privateKeyString: ",privateKeyString); 
+    console.log("> WIFKey: ",WIFKey); 
+    console.log("> publicHash: ",publicHash); 
+    console.log("> publicKey: ",publicKey); 
+  	console.log('> Blockchain info: ',uri);
   
 
 
