@@ -16,7 +16,7 @@ var valueString = "1";
 var maxrange = 64;
 var finalArray = [];
 
-while(value != "f"){
+while(value != "10"){
 
 	while(valueString.length !== 64){
 		var nCount = 0;
@@ -63,6 +63,9 @@ for (i=0,j=publicKeyArray.length; i<j; i+=chunk) {
 	console.log(i);
 	uriCounter++;
 }
+setTimeout(function(){
+    //do what you need here
+}, 8000);
 console.log(uriCounter)
 
 
