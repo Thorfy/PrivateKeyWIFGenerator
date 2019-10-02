@@ -1,28 +1,24 @@
 const sha256 = require('js-sha256');
 const ripemd160 = require('ripemd160');
 const base58 = require('bs58');
-const request = require('request');
+const request = require('request-promise');
 const fs = require('fs');
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
 const maxMax = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
 
-let publicKeyArray = [];
-let pairKeyArray = [];
-
 var value = "1";
 var valueString = "1";
 var maxrange = 64;
 var finalArray = [];
-
+var keyCount = 0;
 while(value != "10"){
-
+	
 	while(valueString.length !== 64){
 		var nCount = 0;
 		var backCount = maxrange - nCount - valueString.length;
 		var endString = "";
-
 		while (backCount !== 0){
 			backCount = maxrange - nCount - valueString.length;
 			endString = addStringToHave64lengthString(valueString, nCount, backCount, value);
@@ -31,10 +27,10 @@ while(value != "10"){
     		WIFKey = createPrivateKeyWIF(privateKey);
     		publicHash = createPublicHash(privateKey);
     		publicKey = createPublicAddress(publicHash);
-    		publicKeyArray.push(publicKey)
-    		pairKeyArray[publicKey] = WIFKey;
-
+			fs.appendFileSync('sample3.txt',`${endString} - ${WIFKey} - ${publicKey}\n`, 'utf8');
 			nCount++;
+			
+    		// do whatever
 		}
 		valueString = valueString + value;
 	}
@@ -43,30 +39,6 @@ while(value != "10"){
 	valueString = value;
 
 }
-
-let uriCounter = 0;
-console.log(publicKeyArray.length);
-var i,j,temparray,chunk = 60;
-for (i=0,j=publicKeyArray.length; i<j; i+=chunk) {
-    temparray = publicKeyArray.slice(i,i+chunk);
-    // do whatever
-	uri = "https://blockchain.info/balance?cors=true&active=" + temparray.join("|");
-	request(uri, { json: true }, (err, res, body) => {
-		if (err) { return console.log(err); }
-		for (let [publicKey, data] of Object.entries(body)) {
-			if(data.n_tx){
-				console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
-				fs.appendFileSync('sample.txt',`${publicKey} - ${pairKeyArray[publicKey]}: ${data.n_tx}  ${data.total_received} ${data.final_balance} \n`, 'utf8');
-			} 
-		}
-	});
-	console.log(i);
-	uriCounter++;
-}
-setTimeout(function(){
-    //do what you need here
-}, 8000);
-console.log(uriCounter)
 
 
 function addStringToHave64lengthString(valueString, frontCount, backCount, value){
