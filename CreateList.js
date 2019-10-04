@@ -62,6 +62,7 @@ for (i=0,j=publicKeyArray.length; i<j; i+=chunk) {
 	uri = "https://blockchain.info/balance?cors=true&active=" + temparray.join("|");
 	request(uri, { json: true }, (err, res, body) => {
 		if (err) { return console.log(err); }
+		if (res == "Invalid Bitcoin Address") { return console.log(err); }
 		for (let [publicKey, data] of Object.entries(body)) {
 			if(data.n_tx){
 				console.log(`${pairKeyArray[publicKey]}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
