@@ -42,7 +42,7 @@ let rawdata = fs.readFile('sample3.txt','utf8',(err, data) => {
 				for (let [publicKey, data] of Object.entries(body)) {
 					if(data.n_tx){
 						console.log(`${tempArray[publicKey]} - ${publicKey}:  ${data.n_tx} ${data.total_received} ${data.final_balance}`);
-						fs.appendFileSync('sample4.txt',`${tempArray[publicKey]} - ${publicKey}:  ${data.n_tx} ${data.total_received} ${data.final_balance} \n`, 'utf8');
+						fs.appendFileSync('sample4.txt',`${tempArray[publicKey]} - ${publicKey}  ${data.n_tx} ${data.total_received} ${data.final_balance} \n`, 'utf8');
 
 					} 
 				}

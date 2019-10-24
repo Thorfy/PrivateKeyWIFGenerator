@@ -4,6 +4,9 @@ const base58 = require('bs58');
 const request = require('request');
 const fs = require('fs');
 
+const args = process.argv;
+const wordToHash = args[2];
+
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
 const maxMax = Buffer.from("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", 'hex');  
@@ -19,7 +22,7 @@ Number.prototype.prefixWith2String = function(s,n) {
 
 
 //let privateKeyString = "0000000000000000000000000000000000000000000000000000000000000001"; 
-  let privateKeyString = "b09c765fa3dc6ad138a8d0da17cd94306fbc32acb3d67bc093936861ccc48769"; 
+  let privateKeyString = wordToHash; 
   	privateKey = Buffer.from(privateKeyString, 'hex');   
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);

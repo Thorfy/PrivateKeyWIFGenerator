@@ -3,18 +3,20 @@ const ripemd160 = require('ripemd160');
 const base58 = require('bs58');
 const request = require('request-promise');
 const fs = require('fs');
+const args = process.argv;
+const fileToParse = args[2];
 
 const ec = require("elliptic").ec;
 const ecdsa = new ec('secp256k1');
 var publicKeyArray = [];
 var pairKeyArray = [];
-let rawdata = fs.readFile('MostCommon20KPasswordFRList.txt','utf8',(err, data) => {
+let rawdata = fs.readFile(fileToParse,'utf8',(err, data) => {
 
  if (err) throw err;
   var parsedPassWord = data.split('\n');
   parsedPassWord.map(password =>{
     password = password.trim();
-    endString = sha256(password)
+    endString = sha256(password);
     privateKey = Buffer.from(endString, 'hex'); 
     WIFKey = createPrivateKeyWIF(privateKey);
     publicHash = createPublicHash(privateKey);
